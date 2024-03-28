@@ -3,7 +3,6 @@ import { NavLink } from "react-router-dom";
 import logo from "../radiocircolologo.png";
 import { BsSearch } from "react-icons/bs";
 
-
 const Navbar = ({ onSearch }) => {
   const [isNavOpen, setIsNavOpen] = useState(false);
   const [searchPodcast, setSearchPodcast] = useState("");
@@ -27,16 +26,17 @@ const Navbar = ({ onSearch }) => {
           onClick={isNavOpen ? () => setIsNavOpen(false) : null}
         />
       </NavLink>
-      <div className="flex items-center">
-  <BsSearch className="mr-2 mt-2 text-xl" /> {/* Adjust margin here as needed */}
-  <input
-    className="w-full border-b-[#ffffffdd] border-b-2 px-3 bg-[#161414fd] text-[#ffffffdd] focus:outline-none"
-    type="text"
-    placeholder=""
-    value={searchPodcast}
-    onChange={handleChange}
-  />
-</div>
+      <div className="md:flex items-center hidden">
+        <BsSearch className="mr-2 mt-2 text-xl" />{" "}
+        {/* Adjust margin here as needed */}
+        <input
+          className="w-full border-b-[#ffffffdd] border-b-2 px-3 bg-[#161414fd] text-[#ffffffdd] focus:outline-none"
+          type="text"
+          placeholder=""
+          value={searchPodcast}
+          onChange={handleChange}
+        />
+      </div>
 
       {/* <input type="text" value={searchQuery} onChange={handleSearch} /> */}
       <div className={`hamburger-menu ${isNavOpen ? "open" : ""}`}>
@@ -60,13 +60,13 @@ const Navbar = ({ onSearch }) => {
               Circles In Space
             </a>
             <div className="flex text-[0.5rem] w-30 mt-48 flex-grow-0 items-center">
-            <NavLink to="/data-privacy" className="lg:hidden block pl-2">
-              Data Privacy
-            </NavLink>
-            <div className="pl-2">|</div>
-            <NavLink to="/imprint" className="lg:hidden block pl-2">
-              Imprint
-            </NavLink>
+              <NavLink to="/data-privacy" className="lg:hidden block pl-2">
+                Data Privacy
+              </NavLink>
+              <div className="pl-2">|</div>
+              <NavLink to="/imprint" className="lg:hidden block pl-2">
+                Imprint
+              </NavLink>
             </div>
           </div>
         </div>
