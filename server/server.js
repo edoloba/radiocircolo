@@ -11,7 +11,7 @@ require("dotenv").config();
 const app = express();
 const PORT = process.env.PORT || 5002;
 
-const mongoURI = process.env.REACT_APP_MONGO_URI;
+const mongoURI = process.env.MONGO_URI;
 mongoose.connect(mongoURI, {
   useNewUrlParser: true,
   useUnifiedTopology: true
@@ -36,8 +36,8 @@ app.use(bodyParser.json());
 app.get("/", async (req, res) => {
   try {
     // Fetch podcasts data from Mixcloud API
-    const username = process.env.REACT_APP_MIXCLOUD_USERNAME;
-    const clientID = process.env.REACT_APP_MIXCLOUD_CLIENT_ID;
+    const username = process.env._MIXCLOUD_USERNAME;
+    const clientID = process.env._MIXCLOUD_CLIENT_ID;
     const mixcloudResponse = await axios.get(
       `https://api.mixcloud.com/${username}/cloudcasts/?limit=100&client_id=${clientID}`
     );
@@ -80,12 +80,13 @@ const Podcast = mongoose.model('Podcast', podcastSchema);
 app.get("/:slug", async (req, res) => {
   try {
     const { slug } = req.params;
-    const username = process.env.REACT_APP_MIXCLOUD_USERNAME;
-    const clientID = process.env.REACT_APP_MIXCLOUD_CLIENT_ID;
+    const username = process.env._MIXCLOUD_USERNAME;
+    const clientID = process.env._MIXCLOUD_CLIENT_ID;
     
     // Fetch podcast data from Mixcloud API
     const mixcloudResponse = await axios.get(`https://api.mixcloud.com/${username}/cloudcasts/?limit=100&client_id=${clientID}`);
     const mixcloudPodcast = mixcloudResponse.data.data.find(podcast => podcast.slug === slug);
+    console.log("slug", slug)
     
     // Fetch additional data from MongoDB
     const mongoPodcast = await Podcast.findOne({ slug });
@@ -104,6 +105,7 @@ app.get("/:slug", async (req, res) => {
       audio: mixcloudPodcast.url,
       ...mongoPodcast._doc
     }
+    console.log("doc", mongoPodcast._doc)
     
     res.json(combinedPodcast);
   } catch (error) {
