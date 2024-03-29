@@ -11,6 +11,14 @@ require("dotenv").config();
 const app = express();
 const PORT = process.env.PORT || 5002;
 
+app.use(cors());
+
+// Serve static files from the React app
+app.use(express.static(path.join(__dirname, "./client/build")));
+
+// Parse JSON bodies
+app.use(bodyParser.json());
+
 const mongoURI = process.env.MONGO_URI;
 mongoose.connect(mongoURI, {
   useNewUrlParser: true,
@@ -22,15 +30,6 @@ mongoose.connect(mongoURI, {
 .catch((error) => {
   console.error('Error connecting to MongoDB:', error);
 });
-
-app.use(cors());
-
-// Serve static files from the React app
-app.use(express.static(path.join(__dirname, "./client/build")));
-
-// Parse JSON bodies
-app.use(bodyParser.json());
-
 
 // Define API endpoint to fetch podcasts data
 app.get("/", async (req, res) => {
