@@ -20,10 +20,7 @@ app.use(express.static(path.join(__dirname, "./client/build")));
 app.use(bodyParser.json());
 
 const mongoURI = process.env.MONGO_URI;
-mongoose.connect(mongoURI, {
-  useNewUrlParser: true,
-  useUnifiedTopology: true
-})
+mongoose.connect(mongoURI)
 .then(() => {
   console.log('Connected to MongoDB');
 })
@@ -126,33 +123,3 @@ app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
 });
 
-
-// app.get("/:slug", async (req, res) => {
-//   try {
-//     const { slug } = req.params;
-//     // Read data.json file to get podcast details
-//     const dataJson = await fs.readFile("./server/data.json", "utf8");
-//     const podcastsData = JSON.parse(dataJson);
-//     // Find the podcast details by slug
-//     const podcast = podcastsData.find((podcast) => podcast.slug === slug);
-//     if (!podcast) {
-//       res.status(404).json({ error: "Podcast not found" });
-//     } 
-//     res.json(podcast);
-//   } catch (error) {
-//     console.error("Error fetching podcast details:", error);
-//     res.status(500).json({ error: "Internal server error" });
-//   }
-// });
-// else {
-//   // Fetch additional details such as picture and audio from Mixcloud
-//   const mixcloudResponse = await axios.get(
-//     `https://api.mixcloud.com/radiocircolo/${slug}`
-//   );
-//   const mixcloudData = mixcloudResponse.data;
-//   console.log("mixcloudData", mixcloudData);
-//   // Update the podcast object with Mixcloud data
-//   podcast.picture = mixcloudData.pictures.extra_large;
-//   podcast.audio = mixcloudData.audio;
-//   res.json(podcast);
-// }

@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from "react";
-import { useParams, Link, useNavigate } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import {
   AiOutlinePlayCircle
 } from "react-icons/ai";
-import { BsArrowCounterclockwise, BsArrowLeft, BsArrowRight } from "react-icons/bs";
+import { BsArrowLeft, BsArrowRight } from "react-icons/bs";
 import axios from "axios";
 
 const Info = ({  podcasts, setMostRecentPodcast, setSelectedPodcast }) => {
@@ -18,9 +18,7 @@ const Info = ({  podcasts, setMostRecentPodcast, setSelectedPodcast }) => {
   const [podcastAudio, setPodcastAudio] = useState("");
   const [podcastInfo, setPodcastInfo] = useState(null)
   const [error, setError] = useState(null);
-  const [isPlaying, setIsPlaying] = useState(false);
-  
-  const [currentIndex, setCurrentIndex] = useState(0); // Index of the current podcast
+  const [isPlaying, setIsPlaying] = useState(false);  
   const [enlarged, setEnlarged] = useState(false);
 
   const toggleEnlarged = () => {
@@ -105,9 +103,6 @@ const Info = ({  podcasts, setMostRecentPodcast, setSelectedPodcast }) => {
           onClick={toggleEnlarged}
         />
         <div className="flex flex-col justify-end md:items-end">
-        {/* <Link to={'/'}>
-        <BsArrowCounterclockwise className="hidden lg:block cursor-pointer mr-8 h-8 w-8 md:h-12 md:w-12" />
-        </Link> */}
           <div className="ml-0 mr-0 md:ml-10 mt-2 md:mr-10 flex justify-between">
             {podcasts.findIndex((p) => p.slug === slug) > 0 && (
                 <BsArrowLeft
