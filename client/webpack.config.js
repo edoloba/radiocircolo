@@ -10,4 +10,8 @@ module.exports = {
       crypto: require.resolve("crypto-browserify"),
     },
   },
+  devServer: {
+    allowedHosts: 'all',
+    // Other devServer configurations...
+  }
 };

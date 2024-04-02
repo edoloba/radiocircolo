@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Navbar from "./components/Navbar";
-import Footer from "./components/Footer";
 import Tiles from "./components/Tiles";
 import Info from "./components/Info";
 import About from "./pages/About";
@@ -37,6 +36,26 @@ function App() {
 
     fetchPodcasts();
   }, []);
+
+  useEffect(() => {
+    // Add event listener for beforeunload
+    const handleBeforeUnload = (event) => {
+      // Check if audio is playing
+      if (mostRecentPodcast !== null) {
+        // Prevent default behavior of the event
+        event.preventDefault();
+        // Chrome requires returnValue to be set
+        event.returnValue = "";
+      }
+    };
+
+    window.addEventListener("beforeunload", handleBeforeUnload);
+
+    // Cleanup function to remove event listener
+    return () => {
+      window.removeEventListener("beforeunload", handleBeforeUnload);
+    };
+  }, [mostRecentPodcast]);
 
   const handleTileClick = (podcast) => {
     setSelectedPodcast(podcast);
@@ -106,8 +125,9 @@ function App() {
           </div>
           {/* Add the audio element for the most recent podcast */}
           {mostRecentPodcast && (
-            <div className="fixed bottom-0 ml-0 xs:ml-4 md:ml-10 w-full xs:w-3/4">
-              <div className="container">
+            <div className="fixed bottom-0 mx-10 w-[100%] xs:w-3/4">
+              {/* ml-0 xs:ml-4  */}
+            
                 <iframe
                   title="Mixcloud Player"
                   width="100%"
@@ -117,55 +137,13 @@ function App() {
                   )}`}
                   frameBorder="0"
                 />
-              </div>
+              
             </div>
           )}
         </div>
-        <Footer />
       </div>
     </Router>
   );
 }
 
 export default App;
-
-// Fetch podcasts from Mixcloud API
-// useEffect(() => {
-//   const fetchPodcasts = async () => {
-//     try {
-//       // Replace 'YOUR_MIXCLOUD_USERNAME' with your actual Mixcloud username
-//       const username = process.env.REACT_APP_MIXCLOUD_USERNAME;
-//       const clientID = process.env.REACT_APP_MIXCLOUD_CLIENT_ID;
-//       const response = await axios.get(
-//         `https://api.mixcloud.com/${username}/cloudcasts/?limit=100&client_id=${clientID}`
-//       );
-
-//       console.log("response", response);
-
-//        // Combine data from Mixcloud and static JSON
-//     const combinedPodcasts = response.data.data.map((mixcloudPodcast) => {
-//       const staticPodcast = podcastsData.find(
-//         (podcast) => podcast.id === mixcloudPodcast.key
-//       );
-//       return { ...mixcloudPodcast, ...staticPodcast };
-//     });
-
-//     // Sort the combined podcasts by date in descending order
-//     const sortedPodcasts = combinedPodcasts.sort((a, b) => {
-//       const dateA = new Date(a.created_time);
-//       const dateB = new Date(b.created_time);
-//       return dateB - dateA;
-//     });
-
-//       setPodcasts(sortedPodcasts);
-//       // Set the URL of the most recent podcast
-//       if (sortedPodcasts.length > 0) {
-//         setMostRecentPodcast(sortedPodcasts[0].url);
-//       }
-//     } catch (error) {
-//       console.error("Error fetching podcasts:", error);
-//     }
-//   };
-
-//   fetchPodcasts();
-// }, []);

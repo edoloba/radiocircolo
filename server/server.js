@@ -40,6 +40,7 @@ app.get("/", async (req, res) => {
     const mixcloudResponse = await axios.get(
       `https://api.mixcloud.com/${username}/cloudcasts/?limit=100&client_id=${clientID}`
     );
+    console.log("data", mixcloudResponse.data)
 
 
     // Extract relevant data from Mixcloud response
@@ -85,7 +86,7 @@ app.get("/:slug", async (req, res) => {
     // Fetch podcast data from Mixcloud API
     const mixcloudResponse = await axios.get(`https://api.mixcloud.com/${username}/cloudcasts/?limit=100&client_id=${clientID}`);
     const mixcloudPodcast = mixcloudResponse.data.data.find(podcast => podcast.slug === slug);
-    console.log("slug", slug)
+    
     
     // Fetch additional data from MongoDB
     const mongoPodcast = await Podcast.findOne({ slug });

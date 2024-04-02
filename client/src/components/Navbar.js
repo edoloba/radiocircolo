@@ -1,11 +1,12 @@
 import React, { useState } from "react";
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 import logo from "../radiocircolologo.png";
 import { BsSearch } from "react-icons/bs";
 
 const Navbar = ({ onSearch }) => {
   const [isNavOpen, setIsNavOpen] = useState(false);
   const [searchPodcast, setSearchPodcast] = useState("");
+  const navigate = useNavigate();
 
   const toggleMenu = () => {
     setIsNavOpen(!isNavOpen);
@@ -14,6 +15,7 @@ const Navbar = ({ onSearch }) => {
   const handleChange = (event) => {
     setSearchPodcast(event.target.value);
     onSearch(event.target.value); // Call the onSearch function passed from parent
+    navigate("/");
   };
 
   return (
@@ -22,51 +24,64 @@ const Navbar = ({ onSearch }) => {
         <img
           src={logo}
           alt="Radio Circolo Logo"
-          className="animate-spin-slow h-16 w-16"
+          className="h-16 w-16 mb-8"
           onClick={isNavOpen ? () => setIsNavOpen(false) : null}
         />
       </NavLink>
-      <div className="md:flex items-center hidden">
-        <BsSearch className="mr-2 mt-2 text-xl" />{" "}
-        {/* Adjust margin here as needed */}
-        <input
-          className="w-full border-b-[#ffffffdd] border-b-2 px-3 bg-[#161414fd] text-[#ffffffdd] focus:outline-none"
-          type="text"
-          placeholder=""
-          value={searchPodcast}
-          onChange={handleChange}
-        />
-      </div>
-
-      {/* <input type="text" value={searchQuery} onChange={handleSearch} /> */}
-      <div className={`hamburger-menu ${isNavOpen ? "open" : ""}`}>
-        <div className="hamburger-icon" onClick={toggleMenu}>
-          <div className="bar"></div>
-          <div className="bar"></div>
-          <div className="bar"></div>
+      <div className="flex search">
+        <div className={isNavOpen ? "hidden" : "hidden xs:flex"}>
+          <BsSearch className="mr-2 mt-2 text-xl" />{" "}
+          {/* Adjust margin here as needed */}
+          <input
+            className="w-1/2 border-b-[#ffffffdd] border-b-2 px-3 bg-[#161414fd] text-[#ffffffdd] focus:outline-none"
+            type="text"
+            placeholder=""
+            value={searchPodcast}
+            onChange={handleChange}
+          />
         </div>
-        <div className={`menu-overlay ${isNavOpen ? "open" : ""}`}>
-          <div className="menu-items" onClick={() => setIsNavOpen(false)}>
-            {/* Insert your navigation links here */}
-            <NavLink to="/about" className="text-md md:text-xl p-5 font-bold">
-              About
-            </NavLink>
-            <a
-              href="https://cashmereradio.com/shows/circles-in-space-by-radiocircolo/"
-              target="_blank"
-              rel="noreferrer"
-              className="text-md md:text-xl pt-5 md:pt-0 font-bold"
-            >
-              Circles In Space
-            </a>
-            <div className="flex text-[0.5rem] w-30 mt-48 flex-grow-0 items-center">
-              <NavLink to="/data-privacy" className="lg:hidden block pl-2">
-                Data Privacy
+
+        {/* <input type="text" value={searchQuery} onChange={handleSearch} /> */}
+        <div className={`hamburger-menu ${isNavOpen ? "open" : ""}`}>
+          <div className="hamburger-icon" onClick={toggleMenu}>
+            <div className="bar"></div>
+            <div className="bar"></div>
+            <div className="bar"></div>
+          </div>
+          <div className={`menu-overlay ${isNavOpen ? "open" : ""}`}>
+            <div className="menu-items" onClick={() => setIsNavOpen(false)}>
+              {/* Insert your navigation links here */}
+              <NavLink
+                to="/about"
+                className="text-md md:text-xl pt-2 font-bold"
+              >
+                About
               </NavLink>
-              <div className="pl-2">|</div>
-              <NavLink to="/imprint" className="lg:hidden block pl-2">
-                Imprint
-              </NavLink>
+              <a
+                href="https://cashmereradio.com/shows/circles-in-space-by-radiocircolo/"
+                target="_blank"
+                rel="noreferrer"
+                className="text-md md:text-xl font-bold"
+              >
+                Circles In Space
+              </a>
+              <a
+                href="https://www.radioalhara.net/"
+                target="_blank"
+                rel="noreferrer"
+                className="text-md md:text-xl font-bold"
+              >
+                Radio Alhara
+              </a>
+              <div className="flex text-[0.8rem] w-30 flex-grow-0 items-center">
+                <NavLink to="/data-privacy" className="block">
+                  Data Privacy
+                </NavLink>
+                <div className="px-2">|</div>
+                <NavLink to="/imprint" className="block">
+                  Imprint
+                </NavLink>
+              </div>
             </div>
           </div>
         </div>

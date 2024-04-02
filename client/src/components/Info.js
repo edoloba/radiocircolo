@@ -104,10 +104,10 @@ const Info = ({  podcasts, setMostRecentPodcast, setSelectedPodcast }) => {
           className={`ml-0 md:mx-10 cursor-pointer ${enlarged ? 'hidden' : ''}`}
           onClick={toggleEnlarged}
         />
-        <div className="flex flex-col justify-between md:items-end">
-        <Link to={'/'}>
+        <div className="flex flex-col justify-end md:items-end">
+        {/* <Link to={'/'}>
         <BsArrowCounterclockwise className="hidden lg:block cursor-pointer mr-8 h-8 w-8 md:h-12 md:w-12" />
-        </Link>
+        </Link> */}
           <div className="ml-0 mr-0 md:ml-10 mt-2 md:mr-10 flex justify-between">
             {podcasts.findIndex((p) => p.slug === slug) > 0 && (
                 <BsArrowLeft
