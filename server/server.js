@@ -118,8 +118,8 @@ app.get("/:slug", async (req, res) => {
 
 console.log("Current working directory:", process.cwd());
 
-// All other routes should serve the React app
-app.get("*", (req, res) => {
+// All other routes should serve the React app, except for /:slug routes
+app.get("/^\/(?!\/\w+).*/", (req, res) => {
   res.sendFile(path.join(__dirname, "./client/build", "index.html"));
 });
 
