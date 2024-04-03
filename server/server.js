@@ -11,7 +11,12 @@ require("dotenv").config();
 const app = express();
 const PORT = process.env.PORT || 5002;
 
-app.use(cors());
+const corsOption = {
+  origin: "https://radiocircolo-front.onrender.com"
+}
+
+app.use(express.json());
+app.use(cors(corsOption));
 
 // Serve static files from the React app
 app.use(express.static(path.join(__dirname, "./client/build")));
