@@ -19,7 +19,8 @@ function App() {
     const fetchPodcasts = async () => {
       try {
         // Fetch data from the backend endpoint
-        const mixcloudResponse = await axios.get("http://localhost:5001/");
+        // const mixcloudResponse = await axios.get("http://localhost:5001/");
+        const mixcloudResponse = await axios.get("https://radiocircolo.onrender.com");
         const data = mixcloudResponse.data;
 
         // Set the combined data in state
