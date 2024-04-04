@@ -1,8 +1,7 @@
 {
   "name": "mixcloud-radiocircolo",
   "version": "0.1.0",
-  "_comment": "proxy development ://localhost:5001",
-  "proxy": "https://radiocircolo.onrender.com",
+  "proxy": "https://localhost:5001",
   "private": true,
   "dependencies": {
     "@react-native-community/cli-platform-android": "^11.3.6",
