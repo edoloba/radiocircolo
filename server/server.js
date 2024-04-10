@@ -11,12 +11,12 @@ require("dotenv").config();
 const app = express();
 const PORT = process.env.PORT || 5002;
 
-const corsOption = {
-  origin: "https://radiocircolo-front.onrender.com"
-}
+// const corsOption = {
+//   origin: "https://radiocircolo-front.onrender.com"
+// }
 
 app.use(express.json());
-app.use(cors(corsOption));
+app.use(cors());
 
 // Serve static files from the React app
 app.use(express.static(path.join(__dirname, "./client/build")));
@@ -25,6 +25,7 @@ app.use(express.static(path.join(__dirname, "./client/build")));
 app.use(bodyParser.json());
 
 const mongoURI = process.env.MONGO_URI;
+console.log(mongoURI)
 mongoose.connect(mongoURI)
 .then(() => {
   console.log('Connected to MongoDB');
@@ -32,6 +33,20 @@ mongoose.connect(mongoURI)
 .catch((error) => {
   console.error('Error connecting to MongoDB:', error);
 });
+
+const podcastSchema = new mongoose.Schema({
+  slug: String,
+  name: String,
+  description: String,
+  members: Array,
+  linkName: Array,
+  link: Array,
+  trackList: Array
+});
+
+
+// Define the Podcast model and specify the collection name
+const Podcast = mongoose.model('Podcast', podcastSchema, "podcasts");
 
 // Define API endpoint to fetch podcasts data
 app.get("/", async (req, res) => {
@@ -57,31 +72,20 @@ app.get("/", async (req, res) => {
         id: mixcloudPodcast.key,
         slug: mixcloudPodcast.slug,
       })
-    );
-
-    res.json(mixcloudPodcasts);
+      );
+      console.log("mixcloud-slug", mixcloudPodcasts.map(podcast => podcast.slug))
+      res.json(mixcloudPodcasts);
   } catch (error) {
     console.error("Error fetching podcasts:", error);
     res.status(500).json({ error: "Internal server error" });
   }
 });
-
-
-const podcastSchema = new mongoose.Schema({
-  slug: String,
-  name: String,
-  description: String,
-  tracklist: Array,
-  members: Array,
-  linkName: Array,
-  link: Array
-});
-
-const Podcast = mongoose.model('Podcast', podcastSchema);
+// const Podcast = mongoose.model('Podcast', podcastSchema);
 
 app.get("/:slug", async (req, res) => {
   try {
     const { slug } = req.params;
+    console.log("slug", slug)
     const username = process.env.MIXCLOUD_USERNAME;
     const clientID = process.env.MIXCLOUD_CLIENT_ID;
     
@@ -89,9 +93,11 @@ app.get("/:slug", async (req, res) => {
     const mixcloudResponse = await axios.get(`https://api.mixcloud.com/${username}/cloudcasts/?limit=100&client_id=${clientID}`);
     const mixcloudPodcast = mixcloudResponse.data.data.find(podcast => podcast.slug === slug);
     
-    
+    console.log("mixcloudPodcast", mixcloudResponse.data.data )
     // Fetch additional data from MongoDB
+    console.log("Podcast", Podcast.findOne({ slug }))
     const mongoPodcast = await Podcast.findOne({ slug });
+    console.log("mongopodcast", mongoPodcast)
     
     if (!mixcloudPodcast) {
       return res.status(404).json({ error: "Podcast not found" });
@@ -107,8 +113,7 @@ app.get("/:slug", async (req, res) => {
       audio: mixcloudPodcast.url,
       ...mongoPodcast._doc
     }
-    console.log("doc", mongoPodcast._doc)
-    
+    console.log("combine", combinedPodcast)
     res.json(combinedPodcast);
   } catch (error) {
     console.error("Error fetching podcast details:", error);

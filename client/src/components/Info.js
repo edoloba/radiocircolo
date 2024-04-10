@@ -28,8 +28,8 @@ const Info = ({  podcasts, setMostRecentPodcast, setSelectedPodcast }) => {
   useEffect(() => {
     const fetchPodcastDetails = async () => {
       try {
-      // const response = await axios.get(`http://localhost:5001/${slug}`);
-      const response = await axios.get(`https://radiocircolo.onrender.com/${slug}`);
+      const response = await axios.get(`http://localhost:5001/${slug}`);
+      // const response = await axios.get(`https://radiocircolo.onrender.com/${slug}`);
       const podcastData = response.data;
       setPodcastInfo(podcastData);
       setDescription(podcastData.description || "");
