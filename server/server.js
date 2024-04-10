@@ -25,7 +25,6 @@ app.use(express.static(path.join(__dirname, "./client/build")));
 app.use(bodyParser.json());
 
 const mongoURI = process.env.MONGO_URI;
-console.log(mongoURI)
 mongoose.connect(mongoURI)
 .then(() => {
   console.log('Connected to MongoDB');
@@ -57,7 +56,6 @@ app.get("/", async (req, res) => {
     const mixcloudResponse = await axios.get(
       `https://api.mixcloud.com/${username}/cloudcasts/?limit=100&client_id=${clientID}`
     );
-    console.log("data", mixcloudResponse.data)
 
 
     // Extract relevant data from Mixcloud response
@@ -73,7 +71,6 @@ app.get("/", async (req, res) => {
         slug: mixcloudPodcast.slug,
       })
       );
-      console.log("mixcloud-slug", mixcloudPodcasts.map(podcast => podcast.slug))
       res.json(mixcloudPodcasts);
   } catch (error) {
     console.error("Error fetching podcasts:", error);
@@ -93,11 +90,8 @@ app.get("/:slug", async (req, res) => {
     const mixcloudResponse = await axios.get(`https://api.mixcloud.com/${username}/cloudcasts/?limit=100&client_id=${clientID}`);
     const mixcloudPodcast = mixcloudResponse.data.data.find(podcast => podcast.slug === slug);
     
-    console.log("mixcloudPodcast", mixcloudResponse.data.data )
     // Fetch additional data from MongoDB
-    console.log("Podcast", Podcast.findOne({ slug }))
     const mongoPodcast = await Podcast.findOne({ slug });
-    console.log("mongopodcast", mongoPodcast)
     
     if (!mixcloudPodcast) {
       return res.status(404).json({ error: "Podcast not found" });
@@ -121,7 +115,7 @@ app.get("/:slug", async (req, res) => {
   }
 });
 
-console.log("Current working directory:", process.cwd());
+// console.log("Current working directory:", process.cwd());
 
 // All other routes should serve the React app
 app.get("*", (req, res) => {

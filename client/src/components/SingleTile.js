@@ -1,10 +1,12 @@
 import React from "react";
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 
 const SingleTile = ({ podcast, setSelectedPodcast, onClick}) => {
+  const navigate = useNavigate();
     const handleClick = () => {
       onClick(podcast);
       setSelectedPodcast(podcast);
+      navigate(`/${podcast.slug}`);
     };
    
   return (
