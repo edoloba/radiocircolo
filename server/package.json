@@ -13,7 +13,8 @@
     "react-router-dom": "^6.22.1"
   },
   "scripts": {
-    "start": "nodemon server.js"
+    "start": "nodemon server.js",
+    "build": "npm i"
   },
   "engines": {
     "node": "20.x",
