@@ -50,14 +50,16 @@ const Info = ({  podcasts, setMostRecentPodcast, setSelectedPodcast }) => {
     fetchPodcastDetails();
   }, [slug]);
 
-  const handlePlayPodcast = (selectedPodcast, event) => {
-    event.preventDefault();
+  const handlePlayPodcast = async (selectedPodcast) => {
     if (selectedPodcast) {
-      setIsPlaying(!isPlaying);
-      setMostRecentPodcast(selectedPodcast);
-      setSelectedPodcast(selectedPodcast);
-    } 
-     else {
+      try {
+        setIsPlaying(!isPlaying);
+        setMostRecentPodcast(selectedPodcast);
+        setSelectedPodcast(selectedPodcast);
+      } catch (error) {
+        console.error("Error fetching podcast details:", error);
+      }
+    } else {
       console.error("Error: Podcast object or audio URL is null");
     }
   };
