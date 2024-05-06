@@ -14,9 +14,8 @@
   },
   "scripts": {
     "start": "nodemon server.js",
-    "build": "npm i",
-    "install": "npm i && cd ../client && npm i --production=false"
-  },
+    "build": "npm i"
+    },
   "engines": {
     "node": "20.x",
     "npm": "12.2.4"
