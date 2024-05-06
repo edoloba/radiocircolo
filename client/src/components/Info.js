@@ -50,7 +50,8 @@ const Info = ({  podcasts, setMostRecentPodcast, setSelectedPodcast }) => {
     fetchPodcastDetails();
   }, [slug]);
 
-  const handlePlayPodcast = (selectedPodcast) => {
+  const handlePlayPodcast = (selectedPodcast, event) => {
+    event.preventDefault();
     if (selectedPodcast) {
       setIsPlaying(!isPlaying);
       setMostRecentPodcast(selectedPodcast);
