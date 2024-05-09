@@ -49,11 +49,11 @@ const Navbar = ({ onSearch }) => {
             <div className="bar"></div>
           </div>
           <div className={`menu-overlay ${isNavOpen ? "open" : ""}`}>
-            <div className="menu-items" onClick={() => setIsNavOpen(false)}>
+            <div className="menu-items text-right" onClick={() => setIsNavOpen(false)}>
               {/* Insert your navigation links here */}
               <NavLink
                 to="/about"
-                className="text-md md:text-xl pt-2 font-bold"
+                className="text-md md:text-xl pt-10 font-bold"
               >
                 About
               </NavLink>
@@ -73,7 +73,15 @@ const Navbar = ({ onSearch }) => {
               >
                 Radio Alhara
               </a>
-              <div className="flex text-[0.8rem] w-30 flex-grow-0 items-center">
+              <a
+                href="https://cashmereradio.com"
+                target="_blank"
+                rel="noreferrer"
+                className="text-md md:text-xl font-bold"
+              >
+                Cashmere Radio
+              </a>
+              <div className="flex text-[0.65rem] w-30 flex-grow-0 items-center">
                 <NavLink to="/data-privacy" className="block">
                   Data Privacy
                 </NavLink>

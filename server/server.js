@@ -5,18 +5,21 @@ const axios = require("axios");
 const cors = require("cors");
 const fs = require("fs").promises;
 const mongoose = require("mongoose");
+const helmet = require('helmet');
 
 require("dotenv").config();
 
 const app = express();
 const PORT = process.env.PORT || 5002;
 
-// const corsOption = {
-//   origin: "https://radiocircolo-front.onrender.com"
-// }
+const corsOptions = {
+  origin: 'https://radiocircolo.com/',
+  optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204
+}
 
 app.use(express.json());
-app.use(cors());
+app.use(cors(corsOptions));
+app.use(helmet());
 
 // Serve static files from the React app
 app.use(express.static(path.join(__dirname, "./client/build")));

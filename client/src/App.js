@@ -20,7 +20,9 @@ function App() {
       try {
         // Fetch data from the backend endpoint
         // const mixcloudResponse = await axios.get("http://localhost:5001/");
-        const mixcloudResponse = await axios.get("https://radiocircolo.onrender.com");
+        const mixcloudResponse = await axios.get(
+          "https://radiocircolo.onrender.com"
+        );
         const data = mixcloudResponse.data;
 
         // Set the combined data in state
@@ -72,7 +74,7 @@ function App() {
   return (
     <Router basename="/">
       <div className="flex flex-col h-screen">
-        <Navbar onSearch={handleSearch}/>
+        <Navbar onSearch={handleSearch} />
         <div className="flex-grow overflow-y-auto">
           {/* Cookie Consent Banner */}
           <CookieConsent
@@ -100,7 +102,9 @@ function App() {
                 path="/"
                 element={
                   <Tiles
-                  podcasts={filteredPodcasts.length ? filteredPodcasts : podcasts}
+                    podcasts={
+                      filteredPodcasts.length ? filteredPodcasts : podcasts
+                    }
                     onTileClicked={handleTileClick}
                     selectedPodcast={selectedPodcast}
                     setSelectedPodcast={setSelectedPodcast}
@@ -126,19 +130,18 @@ function App() {
           </div>
           {/* Add the audio element for the most recent podcast */}
           {mostRecentPodcast && (
-            <div className="fixed bottom-0 mx-10 w-[100%] xs:w-3/4">
+            <div className="fixed bottom-0 mx-10 w-full">
               {/* ml-0 xs:ml-4  */}
-            
-                <iframe
-                  title="Mixcloud Player"
-                  width="100%"
-                  height="60"
-                  src={`https://www.mixcloud.com/widget/iframe/?hide_cover=1&mini=1&autoplay==1&mute=1&feed=${encodeURIComponent(
-                    mostRecentPodcast
-                  )}`}
-                  frameBorder="0"
-                />
-              
+
+              <iframe
+                title="Mixcloud Player"
+                style={{ width: 'calc(100% - 5rem)' }} 
+                height="60"
+                src={`https://www.mixcloud.com/widget/iframe/?hide_cover=1&mini=1&autoplay==1&mute=1&feed=${encodeURIComponent(
+                  mostRecentPodcast
+                )}`}
+                frameBorder="0"
+              />
             </div>
           )}
         </div>

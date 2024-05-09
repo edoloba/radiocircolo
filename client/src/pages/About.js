@@ -1,4 +1,6 @@
 import React from "react";
+import { AiOutlineInstagram, AiOutlineFacebook,AiOutlineMail } from "react-icons/ai";
+
 
 const About = () => {
   return (
@@ -14,7 +16,7 @@ const About = () => {
             discovery in a non-ordinary reality.
           </p>
 
-          <ul className="flex space-x-4 mt-10 justify-center">
+          <ul className="flex space-x-4 mt-20 justify-center">
             <li>
               <a
                 href="https://www.instagram.com/_radiocircolo/"
@@ -22,7 +24,7 @@ const About = () => {
                 rel="noreferrer"
                 className="hover:underline"
               >
-                Instagram
+                <AiOutlineInstagram />
               </a>
             </li>
             <li>
@@ -32,7 +34,7 @@ const About = () => {
                 rel="noreferrer"
                 className="hover:underline"
               >
-                Facebook
+                <AiOutlineFacebook />
               </a>
             </li>
             <li>
@@ -42,7 +44,7 @@ const About = () => {
                 rel="noreferrer"
                 className="hover:underline"
               >
-                Email
+                <AiOutlineMail />
               </a>
             </li>
           </ul>
