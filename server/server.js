@@ -12,13 +12,13 @@ require("dotenv").config();
 const app = express();
 const PORT = process.env.PORT || 5002;
 
-const corsOptions = {
-  origin: 'https://radiocircolo.com/',
-  optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204
-}
+// const corsOptions = {
+//   origin: ['https://radiocircolo.com/', ''],
+//   optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204
+// }
 
 app.use(express.json());
-app.use(cors(corsOptions));
+app.use(cors());
 app.use(helmet());
 
 // Serve static files from the React app
