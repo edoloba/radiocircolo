@@ -183,8 +183,8 @@ const Info = ({  podcasts, setMostRecentPodcast, setSelectedPodcast }) => {
       <div className="fixed top-0 left-0 z-50 w-full h-full flex justify-center items-center bg-black" onClick={toggleEnlarged}>
         <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
           <img
-            src={podcastInfo?.pictures?.extra_large}
-            alt={podcastInfo?.name}
+            src={podcastPicture.extra_large}
+            alt={podcastInfo.name}
             className="max-w-full max-h-full cursor-pointer"
           />
         </div>
