@@ -4,7 +4,7 @@ import { AiOutlineInstagram, AiOutlineFacebook,AiOutlineMail } from "react-icons
 
 const About = () => {
   return (
-    <div className="mx-10 mt-5 max-h-screen">
+    <div className="mx-10 mt-5 max-h-screen overflow-auto pb-20">
       <div className="flex flex-col lg:flex-row gap-6 items-center justify-center">
         <div className="w-full lg:w-[60%]">
           <p className="mt-20 text-lg font-bold text-center">Travel through Sound</p>

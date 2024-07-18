@@ -41,6 +41,7 @@ const Info = ({  podcasts, setMostRecentPodcast, setSelectedPodcast }) => {
        const { picture, audio } = podcastData;
        setPodcastPicture(picture);
        setPodcastAudio(audio);
+       console.log("Podcast picture set to:", picture);
     } catch (error) {
       console.error("Error fetching podcast details:", error);
       setError(error.message);
