@@ -39,7 +39,7 @@ const About = () => {
             </li>
             <li>
               <a
-                href="mailto:info@radiocircolo.com"
+                href="mailto:info.radiocircolo@gmail.com"
                 target="_blank"
                 rel="noreferrer"
                 className="hover:underline"
