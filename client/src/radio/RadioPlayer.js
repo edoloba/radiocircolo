@@ -20,10 +20,6 @@ const randomIn = (from, to) => from + Math.floor(Math.random() * (to - from));
 const randomOffset = (track) =>
   track.duration > 60 ? Math.random() * (track.duration - 30) : 0;
 
-// ⏮/⏭ saltano i file più corti di così (tagli del registratore), che però
-// suonano normalmente quando si prosegue in sequenza.
-const MIN_SKIP_DURATION = 120;
-
 // ⏮ oltre questi secondi dall'inizio del file riavvolge il file in corso.
 const RESTART_THRESHOLD = 3;
 
@@ -95,29 +91,16 @@ const RadioPlayer = forwardRef(({ onPlay }, ref) => {
     playAt(i, randomOffset(tracks[i]));
   }, [count, tracks, playAt]);
 
-  // Primo file nella direzione data (+1/-1, ciclico) abbastanza lungo da
-  // meritare un salto; se non ce ne sono, semplicemente l'adiacente.
-  const skipTarget = useCallback(
-    (step) => {
-      for (let n = 1; n < count; n++) {
-        const i = (((index + step * n) % count) + count) % count;
-        if (tracks[i].duration >= MIN_SKIP_DURATION) return i;
-      }
-      return (((index + step) % count) + count) % count;
-    },
-    [index, count, tracks]
-  );
-
   const next = useCallback(() => {
     if (index === null) return playRandom();
-    playAt(skipTarget(1), 0);
-  }, [index, playAt, playRandom, skipTarget]);
+    playAt((index + 1) % count, 0);
+  }, [index, count, playAt, playRandom]);
 
   const previous = useCallback(() => {
     if (index === null) return playRandom();
     if (audioRef.current.currentTime > RESTART_THRESHOLD) return playAt(index, 0);
-    playAt(skipTarget(-1), 0);
-  }, [index, playAt, playRandom, skipTarget]);
+    playAt((index - 1 + count) % count, 0);
+  }, [index, count, playAt, playRandom]);
 
   const toggle = () => {
     if (playing) pause();

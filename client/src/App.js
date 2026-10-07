@@ -94,9 +94,10 @@ function App() {
 
   return (
     <Router basename="/">
-      <div className="flex flex-col h-screen">
+      {/* 100dvh = altezza visibile reale sui telefoni (100vh include la barra del browser) */}
+      <div className="flex flex-col h-screen h-[100dvh]">
         {/* Topbar dei player: ogni player è un blocco flex-1 */}
-        <div className="flex w-full shrink-0">
+        <div className="sticky top-0 z-40 flex w-full shrink-0">
           <RadioPlayer ref={radioRef} onPlay={handleRadioPlay} />
         </div>
         <Navbar onSearch={handleSearch} />
