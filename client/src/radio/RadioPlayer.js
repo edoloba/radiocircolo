@@ -6,7 +6,12 @@ import React, {
   useRef,
   useState,
 } from "react";
-import { BsPauseFill, BsPlayFill, BsSkipEndFill, BsSkipStartFill } from "react-icons/bs";
+import {
+  AiFillCaretRight,
+  AiOutlinePause,
+  AiOutlineStepBackward,
+  AiOutlineStepForward,
+} from "react-icons/ai";
 
 // Intero casuale in [from, to).
 const randomIn = (from, to) => from + Math.floor(Math.random() * (to - from));
@@ -14,6 +19,13 @@ const randomIn = (from, to) => from + Math.floor(Math.random() * (to - from));
 // Punto di ingresso casuale, lasciando almeno 30s prima della fine del file.
 const randomOffset = (track) =>
   track.duration > 60 ? Math.random() * (track.duration - 30) : 0;
+
+// ⏮/⏭ saltano i file più corti di così (tagli del registratore), che però
+// suonano normalmente quando si prosegue in sequenza.
+const MIN_SKIP_DURATION = 120;
+
+// ⏮ oltre questi secondi dall'inizio del file riavvolge il file in corso.
+const RESTART_THRESHOLD = 3;
 
 const formatRecordedAt = (seconds) =>
   new Date(seconds * 1000).toLocaleString("en-GB", {
@@ -27,8 +39,8 @@ const formatRecordedAt = (seconds) =>
   });
 
 // Player delle registrazioni: parte da un file e un punto casuali, poi prosegue
-// in ordine cronologico. ⏮/⏭ saltano a un file casuale prima/dopo quello in
-// corso. Espone pause() via ref, per fermarlo quando parte Mixcloud.
+// in ordine cronologico. ⏮/⏭ vanno all'inizio del file precedente/successivo.
+// Espone pause() via ref, per fermarlo quando parte Mixcloud.
 const RadioPlayer = forwardRef(({ onPlay }, ref) => {
   const audioRef = useRef(null);
   const pendingSeekRef = useRef(0);
@@ -83,19 +95,29 @@ const RadioPlayer = forwardRef(({ onPlay }, ref) => {
     playAt(i, randomOffset(tracks[i]));
   }, [count, tracks, playAt]);
 
+  // Primo file nella direzione data (+1/-1, ciclico) abbastanza lungo da
+  // meritare un salto; se non ce ne sono, semplicemente l'adiacente.
+  const skipTarget = useCallback(
+    (step) => {
+      for (let n = 1; n < count; n++) {
+        const i = (((index + step * n) % count) + count) % count;
+        if (tracks[i].duration >= MIN_SKIP_DURATION) return i;
+      }
+      return (((index + step) % count) + count) % count;
+    },
+    [index, count, tracks]
+  );
+
   const next = useCallback(() => {
     if (index === null) return playRandom();
-    // Dall'ultimo file si riparte da uno qualsiasi degli altri.
-    const i = index < count - 1 ? randomIn(index + 1, count) : randomIn(0, count - 1);
-    playAt(i, randomOffset(tracks[i]));
-  }, [index, count, tracks, playAt, playRandom]);
+    playAt(skipTarget(1), 0);
+  }, [index, playAt, playRandom, skipTarget]);
 
   const previous = useCallback(() => {
     if (index === null) return playRandom();
-    // Dal primo file si salta a uno qualsiasi degli altri.
-    const i = index > 0 ? randomIn(0, index) : randomIn(1, count);
-    playAt(i, randomOffset(tracks[i]));
-  }, [index, count, tracks, playAt, playRandom]);
+    if (audioRef.current.currentTime > RESTART_THRESHOLD) return playAt(index, 0);
+    playAt(skipTarget(-1), 0);
+  }, [index, playAt, playRandom, skipTarget]);
 
   const toggle = () => {
     if (playing) pause();
@@ -134,35 +156,35 @@ const RadioPlayer = forwardRef(({ onPlay }, ref) => {
   const track = index !== null ? tracks[index] : null;
   const title = track?.title || playlist.name;
   const when = track?.recordedAt ? formatRecordedAt(track.recordedAt + position) : null;
-  const dot = playing ? (buffering ? "bg-yellow-400" : "bg-red-500 animate-pulse") : "bg-[#ffffff44]";
+  const dot = playing ? (buffering ? "bg-yellow-400" : "bg-red-500 animate-pulse") : "bg-[#16141444]";
 
   // Un blocco della topbar: flex-1, così più player si dividono la barra.
   return (
-    <div className="flex h-12 min-w-0 flex-1 items-center gap-4 bg-[#0e0a0b] px-4 uppercase">
+    <div className="flex h-12 min-w-0 flex-1 items-center gap-4 bg-[#ffffff] text-[#000000] px-10 uppercase">
       <button
         type="button"
         onClick={toggle}
         aria-label={playing ? "Pause" : "Play"}
         className="shrink-0 text-3xl hover:opacity-70"
       >
-        {playing ? <BsPauseFill /> : <BsPlayFill />}
+        {playing ? <AiOutlinePause /> : <AiFillCaretRight />}
       </button>
       <div className="flex shrink-0 items-center gap-1 text-lg">
         <button
           type="button"
           onClick={previous}
-          aria-label="Random earlier recording"
+          aria-label="Previous recording"
           className="opacity-60 hover:opacity-100"
         >
-          <BsSkipStartFill />
+          <AiOutlineStepBackward />
         </button>
         <button
           type="button"
           onClick={next}
-          aria-label="Random later recording"
+          aria-label="Next recording"
           className="opacity-60 hover:opacity-100"
         >
-          <BsSkipEndFill />
+          <AiOutlineStepForward />
         </button>
       </div>
       <span className={`h-2 w-2 shrink-0 rounded-full ${dot}`} />
