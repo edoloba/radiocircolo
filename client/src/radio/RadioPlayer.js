@@ -12,6 +12,7 @@ import {
   AiOutlineStepBackward,
   AiOutlineStepForward,
 } from "react-icons/ai";
+import { BsShuffle } from "react-icons/bs";
 
 // Intero casuale in [from, to).
 const randomIn = (from, to) => from + Math.floor(Math.random() * (to - from));
@@ -36,7 +37,8 @@ const formatRecordedAt = (seconds) =>
 
 // Player delle registrazioni: parte da un file e un punto casuali, poi prosegue
 // in ordine cronologico. ⏮/⏭ vanno all'inizio del file precedente/successivo.
-// Espone pause() via ref, per fermarlo quando parte Mixcloud.
+// 🔀 salta a un file e un punto casuali. Espone pause() e toggle() via ref, per
+// l'alternanza con Mixcloud e la barra spaziatrice.
 const RadioPlayer = forwardRef(({ onPlay }, ref) => {
   const audioRef = useRef(null);
   const pendingSeekRef = useRef(0);
@@ -86,10 +88,11 @@ const RadioPlayer = forwardRef(({ onPlay }, ref) => {
     setPlaying(false);
   }, []);
 
+  // File casuale, sempre diverso da quello in corso.
   const playRandom = useCallback(() => {
-    const i = randomIn(0, count);
+    const i = index !== null && count > 1 ? (index + randomIn(1, count)) % count : randomIn(0, count);
     playAt(i, randomOffset(tracks[i]));
-  }, [count, tracks, playAt]);
+  }, [index, count, tracks, playAt]);
 
   const next = useCallback(() => {
     if (index === null) return playRandom();
@@ -102,13 +105,13 @@ const RadioPlayer = forwardRef(({ onPlay }, ref) => {
     playAt((index - 1 + count) % count, 0);
   }, [index, count, playAt, playRandom]);
 
-  const toggle = () => {
+  const toggle = useCallback(() => {
     if (playing) pause();
     else if (index === null) playRandom();
     else resume();
-  };
+  }, [playing, index, pause, playRandom, resume]);
 
-  useImperativeHandle(ref, () => ({ pause }), [pause]);
+  useImperativeHandle(ref, () => ({ pause, toggle }), [pause, toggle]);
 
   useEffect(() => {
     if (!("mediaSession" in navigator)) return;
@@ -168,6 +171,14 @@ const RadioPlayer = forwardRef(({ onPlay }, ref) => {
           className="opacity-60 hover:opacity-100"
         >
           <AiOutlineStepForward />
+        </button>
+        <button
+          type="button"
+          onClick={playRandom}
+          aria-label="Random recording"
+          className="ml-2 opacity-60 hover:opacity-100"
+        >
+          <BsShuffle />
         </button>
       </div>
       <span className={`h-2 w-2 shrink-0 rounded-full ${dot}`} />

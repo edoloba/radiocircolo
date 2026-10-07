@@ -67,18 +67,59 @@ function App() {
   const mixcloudIframeRef = useRef(null);
   const mixcloudWidgetRef = useRef(null);
 
+  // Ultimo player avviato ("radio" | "mixcloud"): è quello che la barra
+  // spaziatrice mette in play/pausa.
+  const activePlayerRef = useRef(null);
+
   const handleMixcloudLoad = () => {
     mixcloudWidgetRef.current = null;
     if (!window.Mixcloud) return;
     const widget = window.Mixcloud.PlayerWidget(mixcloudIframeRef.current);
     widget.ready.then(() => {
       mixcloudWidgetRef.current = widget;
-      widget.events.play.on(() => radioRef.current?.pause());
+      widget.events.play.on(() => {
+        activePlayerRef.current = "mixcloud";
+        radioRef.current?.pause();
+      });
     });
   };
 
   const handleRadioPlay = useCallback(() => {
+    activePlayerRef.current = "radio";
     mixcloudWidgetRef.current?.pause();
+  }, []);
+
+  useEffect(() => {
+    const isTyping = (el) =>
+      el.isContentEditable || ["INPUT", "TEXTAREA", "SELECT"].includes(el.tagName);
+
+    const handleKeyDown = (event) => {
+      if (event.code !== "Space" || event.repeat || isTyping(event.target)) return;
+      if (event.metaKey || event.ctrlKey || event.altKey) return;
+      const active = activePlayerRef.current;
+      if (!active) return;
+      event.preventDefault();
+      // Un pulsante con il focus verrebbe "cliccato" dallo spazio al keyup.
+      if (event.target.tagName === "BUTTON") event.target.blur();
+      if (active === "radio") radioRef.current?.toggle();
+      else mixcloudWidgetRef.current?.togglePlay();
+    };
+
+    // Dopo un click nel widget Mixcloud i tasti finirebbero dentro l'iframe:
+    // si riporta il focus sulla pagina così lo spazio continua a funzionare.
+    const handleWindowBlur = () =>
+      setTimeout(() => {
+        if (document.activeElement === mixcloudIframeRef.current) {
+          mixcloudIframeRef.current.blur();
+        }
+      }, 0);
+
+    window.addEventListener("keydown", handleKeyDown);
+    window.addEventListener("blur", handleWindowBlur);
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+      window.removeEventListener("blur", handleWindowBlur);
+    };
   }, []);
 
   const handleTileClick = (podcast) => {
