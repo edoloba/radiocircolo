@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from "react";
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import React, { useState, useEffect, useRef, useCallback } from "react";
+import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
 import Navbar from "./components/Navbar";
 import Tiles from "./components/Tiles";
 import Info from "./components/Info";
@@ -8,6 +8,7 @@ import CookieConsent from "react-cookie-consent";
 import axios from "axios";
 import DataPrivacy from "./pages/DataPrivacy";
 import Imprint from "./pages/Imprint";
+import RadioPlayer from "./radio/RadioPlayer";
 
 function App() {
   const [podcasts, setPodcasts] = useState([]);
@@ -60,6 +61,26 @@ function App() {
     };
   }, [mostRecentPodcast]);
 
+  // Radio e Mixcloud non suonano mai insieme: quando parte uno, l'altro va in
+  // pausa. Il widget Mixcloud si ricrea a ogni caricamento dell'iframe.
+  const radioRef = useRef(null);
+  const mixcloudIframeRef = useRef(null);
+  const mixcloudWidgetRef = useRef(null);
+
+  const handleMixcloudLoad = () => {
+    mixcloudWidgetRef.current = null;
+    if (!window.Mixcloud) return;
+    const widget = window.Mixcloud.PlayerWidget(mixcloudIframeRef.current);
+    widget.ready.then(() => {
+      mixcloudWidgetRef.current = widget;
+      widget.events.play.on(() => radioRef.current?.pause());
+    });
+  };
+
+  const handleRadioPlay = useCallback(() => {
+    mixcloudWidgetRef.current?.pause();
+  }, []);
+
   const handleTileClick = (podcast) => {
     setSelectedPodcast(podcast);
   };
@@ -74,6 +95,10 @@ function App() {
   return (
     <Router basename="/">
       <div className="flex flex-col h-screen">
+        {/* Topbar dei player: ogni player è un blocco flex-1 */}
+        <div className="flex w-full shrink-0">
+          <RadioPlayer ref={radioRef} onPlay={handleRadioPlay} />
+        </div>
         <Navbar onSearch={handleSearch} />
         <div className="flex-grow overflow-y-auto">
           {/* Cookie Consent Banner */}
@@ -88,9 +113,9 @@ function App() {
             This website uses cookies to enhance the user experience.{" "}
             <span style={{ fontSize: "10px" }}>
               For more information, read our{" "}
-              <a href="/privacy-policy" style={{ color: "#e66767" }}>
+              <Link to="/data-privacy" style={{ color: "#e66767" }}>
                 Privacy Policy
-              </a>
+              </Link>
               .
             </span>
           </CookieConsent>
@@ -134,6 +159,8 @@ function App() {
               {/* ml-0 xs:ml-4  */}
 
               <iframe
+                ref={mixcloudIframeRef}
+                onLoad={handleMixcloudLoad}
                 title="Mixcloud Player"
                 style={{ width: 'calc(100% - 5rem)' }} 
                 height="60"
